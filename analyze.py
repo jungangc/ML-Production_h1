@@ -1,12 +1,22 @@
 import json
 import os
 from typing import Any, Dict
+# from dotenv import load_dotenv
 from litellm import completion
 
-# You can replace these with other models as needed but this is the one we suggest for this lab.
-MODEL = "groq/llama-3.3-70b-versatile"
+# Load environment variables from .env file
+# load_dotenv()
 
-api_key = "hardcoded API_KEY HERE"
+# Get API key from environment
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    raise ValueError("GOOGLE_API_KEY environment variable is not set. Please add it to your .env file.")
+
+# # Set the API key for litellm
+# os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
+
+# MODEL = "gemini/gemini-2.0-flash"
+MODEL = "gemini/gemini-3-flash-preview"
 
 
 def get_itinerary(destination: str) -> Dict[str, Any]:
@@ -17,11 +27,44 @@ def get_itinerary(destination: str) -> Dict[str, Any]:
       - ideal_visit_times
       - top_attractions
     """
-    # implement litellm call here to generate a structured travel itinerary for the given destination
-
-    # See https://docs.litellm.ai/docs/ for reference.
-
-    data = ...
     
-
-    return data
+    response_schema = {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "recipe_name": {
+                    "type": "string",
+                },
+            },
+            "required": ["recipe_name"],
+        },
+    }
+    
+    prompt = f"""Generate a travel itinerary for {destination}. 
+    Return ONLY valid JSON (no markdown, no extra text) with exactly these keys:
+    {{
+        "destination": "{destination}",
+        "price_range": "budget/moderate/luxury",
+        "ideal_visit_times": ["month1", "month2"],
+        "top_attractions": ["attraction1", "attraction2", "attraction3"]
+    }}"""
+    
+    try:
+        # model = genai.GenerativeModel(MODEL)
+        # response = model.generate_content(prompt)
+        response = completion(
+          model = MODEL,
+          messages = [{"role": "user", "content": prompt}]
+          # response_format={"type": "json_object", "response_schema": response_schema}
+        )
+        
+        response_text = response.choices[0].message.content
+        
+        # Parse JSON response
+        data = json.loads(response_text)
+        return data
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON response from model: {str(e)}")
+    except Exception as e:
+        raise Exception(f"Gemini API error: {str(e)}")

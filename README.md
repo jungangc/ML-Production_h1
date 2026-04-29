@@ -25,6 +25,22 @@ Once running, the API will be available at:
 http://localhost:8000/api/v1/itinerary
 ```
 
+
+## Containerize the application
+Build and run the app with Docker:
+
+```bash
+docker build -t mlip-itinerary-api .
+```
+
+```bash
+docker run --rm -p 8000:8000 -e GOOGLE_API_KEY="your_api_key" mlip-itinerary-api
+```
+
+Then access:
+- App docs page: `http://localhost:8000/`
+- API endpoint: `http://localhost:8000/api/v1/itinerary?destination=Paris`
+
 ## Generate an LLM API Key
 For this we suggest using an API key from Groq but you are certainly free to use other API keys, such as those from OpenAI, Anthropic, etc., Instructions for using those keys can be found [here](https://docs.litellm.ai/docs/providers/openai). The instructions below are shown for getting an API key from Groq.
 1. Sign into your Groq account and [navigate to the API keys console](https://console.groq.com/keys) 

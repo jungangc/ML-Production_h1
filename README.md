@@ -99,6 +99,13 @@ You can use tools like [curl](https://curl.se/) or [Postman](https://www.postman
 The file [mlip-api-lab-collection.json](./mlip-api-lab-collection.json) has a sample request to test calls to your API with Postman. Consider using [Postman test scripts](https://learning.postman.com/docs/tests-and-scripts/write-scripts/test-scripts/) to test the response of your API endpoints (status codes, response structure, etc.,).
 
 
+
+## Continuous Integration (GitHub Actions)
+This repository includes a CI workflow at `.github/workflows/ci.yml` that runs on **every push and pull request**. The workflow:
+- installs Python dependencies,
+- runs `python -m py_compile app.py analyze.py`,
+- builds the Docker image to verify the containerization setup.
+
 ## Additional resources 
 - [Redhat article on API](https://www.redhat.com/en/topics/api/what-are-application-programming-interfaces)
 - [API Design Best Practices](https://blog.stoplight.io/crud-api-design?_ga=2.223919515.1813989671.1674077556-1488117179.1674077556)
